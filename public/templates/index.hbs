@@ -1,0 +1,56 @@
+<script>
+    function buy_clicked(event, id) {
+        event.preventDefault();
+        Model.buy(id)
+            .done(function(data, statusText, xhr) {
+                for (let item of data["items"]) {
+                    if (item.product == id) {
+                        Messages.success.push(`${item.title} was succesfully added to the cart!`);
+                        break;
+                    }
+                }
+                navigateTo(event.target.href, event);
+            })
+            .fail(function(error){
+                Messages.danger.push(`${error.statusText} (${error.status}): ${error.responseJSON.message}`);
+                navigateTo(event.target.href, event);
+            });
+        
+    }
+</script>
+
+{{> navBar this}}
+
+{{> header this}}
+
+{{> messages this}}
+
+<main>
+    <div class="container">
+        <div class="row">
+            {{#each this.products}}
+            <div class="col-xl-3 col-lg-4 col-md-6 col-12 mb-3">
+                <div class="card text-dark bg-light mb-3">
+                    <img src="{{this.url}}" class="card-img-top border-bottom" alt="{{title}} cover">
+                    <div class="card-body">
+                        <h5 class="card-title">{{title}}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{author}}</h6>
+                        <p class="card-text">{{description}}</p>
+                        <div class="d-flex flex-row align-items-start justify-content-end">
+                            <div class="p-2">
+                                <h2>{{formatPrice price}}</h2>
+                            </div>
+                            <div class="p-2">
+                                <a href="/index" class="btn btn-primary btn-lg {{#unless ../user}}disabled{{/unless}}" onclick="buy_clicked(event, '{{_id}}')">Buy</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+    <br><br>
+</main>
+
+{{> footer this}}

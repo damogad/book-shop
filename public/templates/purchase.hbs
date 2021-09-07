@@ -1,0 +1,109 @@
+<script>
+    $(document).ready(function() {
+        let today = new Date();
+        let dd = String(today.getDate()).padStart(2, '0');
+        let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        let yyyy = today.getFullYear();
+        today = yyyy + '-' + mm + '-' + dd;
+
+        $('#purchaseInputDate').val(today);
+    });
+
+    function purchase_clicked(event) {
+        event.preventDefault();
+        let form = document.getElementById('purchaseForm');
+        form.classList.add('was-validated');
+        
+        if (form.checkValidity()) {
+            Model.purchase($('#purchaseInputDate').val(),
+                $('#purchaseInputAddress').val(),
+                $('#purchaseInputCardNumber').val(),
+                $('#purchaseInputCardHolder').val())
+                .done(function(data, statusText, xhr) {
+                    Messages.success.push("Purchase completed!");
+                    navigateTo(event.target.href + data.number, event);
+                }) 
+                .fail(function(error) {
+                    Messages.danger.push(`${error.statusText} (${error.status}): ${error.responseJSON.message}`);
+                    navigateTo('/purchase', event);
+                });
+        }
+        else {
+            console.log('invalid form');
+        }
+    }
+</script>
+
+{{> navBar this}}
+
+{{> header this}}
+
+{{> messages this}}
+
+<main>
+    <div class="container">
+        <div class="row justify-content-center mb-5">
+            <div class="col-12 col-md-10 col-lg-8">
+                <h2 class="mb-3">Purchase</h2>
+                {{#if user.shoppingCart.qty}}
+                <form id="purchaseForm" class="needs-validation" novalidate>
+                    <div class="form-group">
+                        <label for="purchaseInputDate">Date</label>
+                        <input type="date" class="form-control" id="purchaseInputDate" aria-describedby="dateHelp" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="purchaseInputAddress">Address</label>
+                        <input type="text" class="form-control" id="purchaseInputAddress" required="" autofocus="">
+                        <div class="invalid-feedback">The address field cannot be empty</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="purchaseInputCardNumber">Card number</label>
+                        <input type="text" class="form-control" id="purchaseInputCardNumber" required="">
+                        <div class="invalid-feedback">The card number field cannot be empty</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="purchaseInputCardHolder">Card holder</label>
+                        <input type="text" class="form-control" id="purchaseInputCardHolder" required="">
+                        <div class="invalid-feedback">The card holder field cannot be empty</div>
+                    </div>
+                    <h2 class="mb-3 mt-5">Items</h2>
+                    <div class="table-responsive mb-4">
+                        <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Qty</th>
+                                <th scope="col">Product name</th>
+                                <th scope="col">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each user.shoppingCart.items}}
+                            <tr>
+                                <td>{{qty}}</td>
+                                <td>{{title}}</td>
+                                <td>{{formatPrice total}}</td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                        </table>
+                    </div>
+                    <p><b>Subtotal: </b><span>{{formatPrice user.shoppingCart.subtotal}}</span></p>
+                    <p><b>Tax: </b><span>{{formatPrice user.shoppingCart.tax}}</span></p>
+                    <p><b>Total: </b><span>{{formatPrice user.shoppingCart.total}}</span></p>
+                    <div class="row justify-content-end mt-4 mb-5 form-group">
+                        <div class="mr-3">
+                        <a class="btn btn-primary" href="/order/id/" onclick="purchase_clicked(event)" role="button">Checkout</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            {{else}}
+            <div class="d-flex flex-row justify-content-start mt-4">
+                <p>No items in shopping cart</p>
+            </div>
+            {{/if}}
+        </div>
+    </div>
+</main>
+
+{{> footer this}}

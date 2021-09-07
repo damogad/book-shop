@@ -1,0 +1,98 @@
+<script>
+    function signup_clicked(event) {
+        event.preventDefault();
+        let form = document.getElementById('signUpForm');
+        form.classList.add('was-validated');
+        
+        if (form.checkValidity()) {
+            password = $('#signUpInputPassword').val();
+            password2 = $('#signUpInputConfirmPassword').val();
+            if (password === password2) {
+                Model.signup(
+                    $('#signUpInputName').val(),
+                    $('#signUpInputSurname').val(),
+                    $('#signUpInputAddress').val(),
+                    $('#signUpInputBirth').val(),
+                    $('#signUpInputEmail').val(),
+                    password)
+                .done(function(data, statusText, xhr) {
+                    Messages.success.push(`${statusText} (${xhr.status}): ${data.message}`);
+                    navigateTo(event.target.href, event);
+                }) 
+                .fail(function(error) {
+                    Messages.danger.push(`${error.statusText} (${error.status}): ${error.responseJSON.message}`);
+                    navigateTo('/signup', event);
+                });
+            }
+            else {
+                Messages.danger.push("Passwords don't match");
+                navigateTo('/signup', event);
+            }
+        }
+        else {
+            console.log("invalid form");
+        }
+    }
+</script>
+
+{{> navBar this}}
+
+{{> header this}}
+
+{{> messages this}}
+
+<main>
+    <div class="container">
+        <div class="text-center">
+            <h2>Sign Up</h2>
+        </div>
+        <div class="row justify-content-center mb-5">
+            <div class="col-12 col-sm-11 col-md-9 col-lg-7">
+                <form id="signUpForm" class="needs-validation" novalidate>
+                    <div class="form-group">
+                        <label for="signUpInputName">Name</label>
+                        <input type="text" class="form-control" id="signUpInputName" required="" autofocus="">
+                        <div class="invalid-feedback">The name field cannot be empty</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signUpInputSurname">Surname</label>
+                        <input type="text" class="form-control" id="signUpInputSurname" required="">
+                        <div class="invalid-feedback">The surname field cannot be empty</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signUpInputAddress">Address</label>
+                        <input type="text" class="form-control" id="signUpInputAddress" required="">
+                        <div class="invalid-feedback">The address field cannot be empty</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signUpInputBirth">Birth</label>
+                        <input type="date" class="form-control" id="signUpInputBirth" required="">
+                        <div class="invalid-feedback">The birth field cannot be empty</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signUpInputEmail">Email address</label>
+                        <input type="email" class="form-control" id="signUpInputEmail" required="">
+                        <div class="invalid-feedback">Incorrect email address</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signUpInputPassword">Password</label>
+                        <input type="password" class="form-control" id="signUpInputPassword" required="">
+                        <div class="invalid-feedback">The password field cannot be empty</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signUpInputConfirmPassword">Confirm Password</label>
+                        <input type="password" class="form-control" id="signUpInputConfirmPassword" required="">
+                        <div class="invalid-feedback">Please, enter the same password</div>
+                    </div>
+                    <div class="row justify-content-end mt-4 mb-5">
+                        <div class="mr-3">
+                        <a class="btn btn-primary" href="/signin" onclick="signup_clicked(event)" role="button">Sign up</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+{{> footer this}}

@@ -1,0 +1,66 @@
+<script>
+    function signin_clicked(event) {
+        event.preventDefault();
+        let form = document.getElementById('signInForm');
+        form.classList.add('was-validated');
+        
+        if (form.checkValidity()) {
+            Model.signin($('#signInInputEmail').val(), $('#signInInputPassword').val())
+                .done(function (user) {
+                    //Model.user = user;
+                    Messages.success.push(`Welcome ${user.name} ${user.surname}`);
+                    navigateTo(event.target.href, event);
+                })
+                .fail(function (error) {
+                    Messages.danger.push(`${error.statusText} (${error.status}): ${error.responseJSON.message}`);
+                    navigateTo('/signin', event);
+                });
+            //if (Model.user)
+            //    navigateTo(event.target.href, event);
+            //else
+            //    navigateTo('/signin', event);
+        }
+        else {
+            console.log('invalid form');
+        }
+    }
+
+</script>
+
+
+{{> navBar this}}
+
+{{> header this}}
+
+{{> messages this}}
+
+<main>
+    <div class="container">
+        <div class="text-center">
+            <h2>Sign In</h2>
+        </div>
+        <div class="row justify-content-center mb-5">
+            <div class="col-12 col-sm-11 col-md-9 col-lg-7">
+                <form id="signInForm" class="needs-validation" novalidate>
+                    <div class="form-group">
+                        <label for="signInInputEmail">Email address</label>
+                        <input type="email" class="form-control" id="signInInputEmail" required="" autofocus="">
+                        <div class="invalid-feedback">Incorrect email address</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signInInputPassword">Password</label>
+                        <input type="password" class="form-control" id="signInInputPassword" required="">
+                        <div class="invalid-feedback">The password field cannot be empty</div>
+                    </div>
+                    <div class="row justify-content-end mt-4 mb-5">
+                        <div class="mr-3">
+                            <a class="btn btn-primary" href="/index" onclick="signin_clicked(event)" role="button">Sign in</a>
+                        </div> 
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+{{> footer this}}

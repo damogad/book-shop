@@ -1,0 +1,48 @@
+{{> navBar this}}
+
+{{> header this}}
+
+{{> messages this}}
+
+<main>
+    <div class="container">
+        <div class="row justify-content-center mb-5">
+            <div class="col-12 col-md-10 col-lg-8">
+                <h2 id="orderNumber" class="mb-3">Order {{order.number}}</h2>
+                <p><b>Date: </b><span id="orderDate">{{formatDate order.date}}</span></p>
+                <p><b>Address: </b><span id="orderAddress">{{order.address}}</span></p>
+                <p><b>Card number: </b><span id="orderCardNumber">{{order.cardNumber}}</span></p>
+                <p><b>Card holder: </b><span id="orderCardHolder">{{order.cardHolder}}</span></p>
+                <hr/>
+                <h2 class="mb-3">Products</h2>
+                <div class="table-responsive mb-4">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Qty</th>
+                                <th scope="col">Product name</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each order.items}}
+                            <tr>
+                                <td>{{qty}}</td>
+                                <td>{{title}}</td>
+                                <td>{{formatPrice price}}</td>
+                                <td>{{formatPrice total}}</td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+                <p><b>Subtotal: </b><span>{{formatPrice order.subtotal}}</span></p>
+                <p><b>Tax: </b><span>{{formatPrice order.tax}}</span></p>
+                <p class="mb-5"><b>Total: </b><span>{{formatPrice order.total}}</span></p>
+            </div>
+        </div>
+    </div>
+</main>
+
+{{> footer this}}

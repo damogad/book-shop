@@ -1,0 +1,104 @@
+<script>
+    function delete_one_clicked(event, id, title) {
+        event.preventDefault();
+        Model.deleteOne(id)
+            .done(function() {
+                Messages.success.push(`A unit of ${title} was deleted`);
+                navigateTo(event.target.href, event);
+            })
+            .fail(function(error){
+                Messages.danger.push(`${error.statusText} (${error.status}): ${error.responseJSON.message}`);
+                navigateTo(event.target.href, event);
+            });
+    }
+
+    function delete_all_clicked(event, id, title) {
+        event.preventDefault();
+        Model.deleteAll(id)
+            .done(function() {
+                Messages.success.push(`All units of ${title} were deleted`);
+                navigateTo(event.target.href, event);
+            })
+            .fail(function(error){
+                Messages.danger.push(`${error.statusText} (${error.status}): ${error.responseJSON.message}`);
+                navigateTo(event.target.href, event);
+            });
+    }
+
+    function purchase_clicked(event) {
+        event.preventDefault();
+        Messages.success.push("OK, now complete every field in order to get your order");
+        navigateTo(event.target.href, event);
+    }
+
+</script>
+
+{{> navBar this}}
+
+{{> header this}}
+
+{{> messages this}}
+
+<main>
+    <div class="container">
+        <div class="row justify-content-center mb-5">
+            <div class="col-12 col-md-10 col-lg-8">
+                <h2 class="mb-3">Shopping Cart</h2>
+                {{#if user.shoppingCart.qty}}
+                <div class="d-flex flex-row justify-content-end mr-1">
+                    <p><b>Total: </b><span>{{formatPrice user.shoppingCart.total}}</span></p>
+                </div>
+                <h2 class="mb-3">Items</h2>
+                <div class="table-responsive mb-4">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Qty</th>
+                                <th scope="col">Product name</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Total</th>
+                                <th scope="col">&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each user.shoppingCart.items}}
+                            <tr>
+                                <td>{{qty}}</td>
+                                <td>{{title}}</td>
+                                <td>{{formatPrice price}}</td>
+                                <td>{{formatPrice total}}</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-danger dropdown-toggle" type="button" id="removeItem1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Remove
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item" href="/cart" onclick="delete_one_clicked(event, '{{product}}', '{{title}}')">One</a>
+                                            <a class="dropdown-item" href="/cart" onclick="delete_all_clicked(event, '{{product}}', '{{title}}')">All</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+                <p><b>Subtotal: </b><span>{{formatPrice user.shoppingCart.subtotal}}</span></p>
+                <p><b>Tax: </b><span>{{formatPrice user.shoppingCart.tax}}</span></p>
+                <p><b>Total: </b><span>{{formatPrice user.shoppingCart.total}}</span></p>
+                <div class="row justify-content-end mt-4 mb-5">
+                    <div class="mr-3">
+                        <a class="btn btn-primary" href="/purchase" onclick="purchase_clicked(event)" role="button">Purchase</a>
+                    </div>
+                </div>
+                {{else}}
+                <div class="d-flex flex-row justify-content-start mt-4">
+                    <p>No product items in the shopping cart yet</p>
+                </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</main>
+
+{{> footer this}}

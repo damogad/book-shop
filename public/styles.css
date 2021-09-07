@@ -1,0 +1,14 @@
+#header {
+    background-image: url(/images/main.jpg);
+    background-size: cover;
+}
+
+.navbarcolor {
+    background-color: navy;
+}
+
+.alertmessage {
+    position: sticky;
+    top: 10vh;
+    z-index: 1;
+}
